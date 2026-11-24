@@ -8,7 +8,7 @@ function toast(m) {
   clearTimeout(toast.t);
   toast.t = setTimeout(() => el.classList.remove('show'), 3200);
 }
-const LOGO = '<span class="logo"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>';
+const LOGO = '<img class="logo" src="img/Registration_Verification_Icon.png" alt="">';
 function renderBar() {
   G('bar').innerHTML = `<span class="brand">${LOGO}${t('app')}</span><span class="sp"></span>
   <button class="pill ${net() ? 'on' : 'off'}" onclick="toggleNet()" title="${t('nettip')}">${net() ? t('online') : t('offline')}</button>
@@ -17,9 +17,8 @@ function renderBar() {
   ${ME ? `<button class="ghost light" onclick="logout()">${t('logout')}</button>` : ''}`;
 }
 function loginHTML() {
-  return `<section class="hero"><div class="logo big"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div><h1>${t('hero1')}</h1><p>${t('hero2')}</p>
-    </section>
+   return `<section class="hero"><img class="hero-logo" src="img/Registration_National_Logo.png" alt="Registration National"><h1>${t('hero1')}</h1><p>${t('hero2')}</p></section>
+   
   <div class="card phone"><h2>${t('login')}</h2><label for="li">${t('user')}</label><input id="li" autocomplete="off">
     <label for="lp">${t('pin')}</label><input id="lp" type="password" inputmode="numeric" maxlength="4" onkeydown="if(event.key==='Enter')doLogin()">
     <div class="err" id="le"></div><button style="width:100%" onclick="doLogin()">${t('login')}</button>
