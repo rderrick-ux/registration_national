@@ -73,6 +73,20 @@ async function render() {
   }
   else if (!net()) app.innerHTML = `<div class="card phone"><h3>${t('offtitle')}</h3><p>${t('offtext')}</p></div>`;
   else app.innerHTML = ME.role === 'registrar' ? regHTML() : admHTML();
+  labelTables();
+}
+/* Copy each column heading onto its cells so tables can turn into labelled cards on phones (see styles.css) */
+function labelTables() {
+  document.querySelectorAll('#app table').forEach(tb => {
+    const head = [...tb.rows].find(r => r.querySelector('th'));
+    if (!head) return;
+    head.classList.add('thead');
+    const names = [...head.cells].map(c => c.textContent.trim());
+    [...tb.rows].forEach(r => {
+      if (r === head) return;
+      [...r.cells].forEach((c, i) => { if (names[i] && c.colSpan === 1) c.dataset.label = names[i]; });
+    });
+  });
 }
 
 setInterval(() => { if (ME && ME.role === 'chw') sync(); }, 4000);
