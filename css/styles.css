@@ -708,3 +708,6 @@ td:last-child button + button { margin-left: 6px; }
   .modal { padding: 8px; }
   .modal .card { max-height: 94vh; }
 }
+
+img.logo { display: inline-block; width: 34px; height: 34px; padding: 0; background: none; border-radius: 8px; object-fit: cover; }
+.hero-logo { display: block; width: 100%; max-width: 440px; height: auto; border-radius: 14px; margin-bottom: 18px; }
