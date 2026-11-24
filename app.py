@@ -2255,8 +2255,19 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         path = self.path.split("?")[0]
-        if path in ("/", "/index.html"):
-            self._send(200, PAGE, "text/html; charset=utf-8")
+        if path == "/":
+            path = "/index.html"
+        if not path.startswith("/api/"):
+            root = os.path.dirname(os.path.abspath(__file__))
+            fpath = os.path.normpath(os.path.join(root, path.lstrip("/")))
+            types = {".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8",
+                     ".js": "text/javascript; charset=utf-8", ".png": "image/png", ".jpg": "image/jpeg",
+                     ".ico": "image/x-icon", ".svg": "image/svg+xml"}
+            ctype = types.get(os.path.splitext(fpath)[1].lower())
+            if fpath.startswith(root + os.sep) and ctype and os.path.isfile(fpath):
+                with open(fpath, "rb") as f:
+                    return self._send(200, f.read(), ctype)
+            return self._send(404, '{"error": "not found"}')
         elif path == "/api/ping":
             self._send(200, '{"ok": true}')
         elif path == "/api/db":
