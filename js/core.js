@@ -297,6 +297,12 @@ async function seed() {
     users: [{ id: 'u-admin', name: 'Administrator', role: 'admin', login: 'admin', hash: await sha('admin:1234'), district: '', sector: '', cell: '', village: '' }],
     records: [], sms: [], log: []
   };
+    /* Demo accounts, recreated whenever the database starts empty (for example after the free Render service restarts) */
+  const DEMO = [
+    { id: 'u-demo-registrar', name: 'eddy', role: 'registrar', login: '0788123987', pin: '2222', district: 'Nyarugenge', sector: 'Nyamirambo', cell: '', village: '' },
+    { id: 'u-demo-chw', name: 'loic', role: 'chw', login: '0798123456', pin: '1111', district: 'Nyarugenge', sector: 'Nyamirambo', cell: 'Mumena', village: '' }
+  ];
+  for (const { pin, ...u } of DEMO) db.users.push({ ...u, hash: await sha(u.login + ':' + pin) });
   logS(db, 'System initialised');
   S('rn_server', db);
 }
