@@ -695,6 +695,8 @@ body {
 }
 #scene svg { width: 100%; height: 100%; display: block; }
 #bar, main, footer { position: relative; z-index: 1; }
+/* main sits above the footer so record pop-ups are never covered by the footer text */
+main { z-index: 2; }
 #bar { position: sticky; z-index: 5; }
 /* Text that sits directly on the scene (not inside a card) */
 .greet, .greet h2, .greet .muted, main > p, main > h3, main > .muted, footer { color: var(--ink); }
@@ -720,6 +722,36 @@ main > p > button.ghost { background: #0a082066; color: var(--ink); border-color
 @keyframes twinkle { 0%,100% { opacity: .2; } 50% { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) {
   .sun, .pulse, .mist, .tw { animation: none !important; }
+}
+
+/* Wider layout for the registrar and admin portals (CHW view stays phone-sized) */
+body[data-role="admin"] main,
+body[data-role="registrar"] main {
+  max-width: 1440px;
+}
+td select { min-width: 10.5em; }
+td input { min-width: 9em; }
+td:last-child { white-space: nowrap; }
+td:last-child button + button { margin-left: 6px; }
+
+/* Phones: each table row becomes a card, with the column name shown next to each value */
+@media (max-width: 760px) {
+  main { padding: 12px 10px 32px; }
+  .scroll { overflow-x: visible; }
+  .scroll table, .scroll tbody, .scroll tr, .scroll td { display: block; width: 100%; }
+  .scroll tr.thead { display: none; }
+  .scroll tr { border: 1px solid var(--bd); border-radius: 12px; padding: 6px 12px; margin-bottom: 10px; }
+  .scroll tr:hover td { background: none; }
+  .scroll td { border: 0; padding: 7px 0; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; white-space: normal; overflow-wrap: anywhere; }
+  .scroll td[data-label]::before { content: attr(data-label); flex: 0 0 7.5em; font-size: 13px; font-weight: 600; color: var(--mut); }
+  .scroll td:empty, .scroll td[colspan]:empty { display: none; }
+  .scroll td select, .scroll td input { flex: 1 1 10em; min-width: 0; width: auto; }
+  .scroll td:last-child button { flex: 1; }
+  .scroll td:last-child button + button { margin-left: 0; }
+  .tabs { overflow-x: auto; flex-wrap: nowrap; max-width: 100%; }
+  .tabs button { flex: 0 0 auto; }
+  .modal { padding: 8px; }
+  .modal .card { max-height: 94vh; }
 }
 </style>
 </head>
@@ -2158,6 +2190,20 @@ async function render() {
   }
   else if (!net()) app.innerHTML = `<div class="card phone"><h3>${t('offtitle')}</h3><p>${t('offtext')}</p></div>`;
   else app.innerHTML = ME.role === 'registrar' ? regHTML() : admHTML();
+  labelTables();
+}
+/* Copy each column heading onto its cells so tables can turn into labelled cards on phones (see styles.css) */
+function labelTables() {
+  document.querySelectorAll('#app table').forEach(tb => {
+    const head = [...tb.rows].find(r => r.querySelector('th'));
+    if (!head) return;
+    head.classList.add('thead');
+    const names = [...head.cells].map(c => c.textContent.trim());
+    [...tb.rows].forEach(r => {
+      if (r === head) return;
+      [...r.cells].forEach((c, i) => { if (names[i] && c.colSpan === 1) c.dataset.label = names[i]; });
+    });
+  });
 }
 
 setInterval(() => { if (ME && ME.role === 'chw') sync(); }, 4000);
